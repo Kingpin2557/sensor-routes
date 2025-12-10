@@ -1,5 +1,3 @@
-import api from "./api";
-
 const express = require('express');
 const app = express();
 const PORT = 8080;
@@ -13,6 +11,13 @@ const sensors = [
     },
 ]
 
+
+app.get('/', (req, res) => {
+    res.status(200).json({
+        message: 'Welcome to the Sensor API. Use /sensors for all data.',
+        available_routes: ['/sensors (GET)', '/sensor (POST)', '/sensor/:id (PATCH)']
+    });
+});
 app.get('/sensors', (req, res) => {
     res.status(200).send({
         sensors: sensors
