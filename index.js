@@ -74,14 +74,10 @@ app.patch('/sensor/:id', (req, res) => {
     const sensorIndex = sensors.findIndex(sensor => sensor.id === sensorId);
 
     if (sensorIndex !== -1) {
-        const existingSensor = sensors[sensorIndex];
-
         sensors[sensorIndex] = {
             ...sensors[sensorIndex],
             data:[...updateDataArray],
-            userConfig: {
-                ...(existingSensor.userConfig ?? {})
-            }
+            userConfig: req.body.userConfig
         };
 
         return res.status(200).json({
