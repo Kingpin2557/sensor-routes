@@ -67,10 +67,8 @@ app.patch('/sensor/:id', (req, res) => {
     const sensorId = parseInt(req.params.id);
     const updateDataArray = req.body.data;
 
-    if (!updateDataArray || !Array.isArray(updateDataArray) || updateDataArray.length === 0) {
-        return res.status(400).json({
-            error: "Request body must contain a 'data' array with update fields."
-        });
+    if (Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: "Request body must contain fields to update." });
     }
 
     const sensorIndex = sensors.findIndex(sensor => sensor.id === sensorId);
