@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 const PORT = 8080;
 
-const allowedOrigin = 'https://cdpn.io';
+const allowedOrigin = ['https://cdpn.io', 'http://localhost:3000'];
 const corsOptions = {
     origin: allowedOrigin,
     methods: 'GET,POST,PATCH',
