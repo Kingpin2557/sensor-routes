@@ -63,9 +63,37 @@ app.post('/sensor', (req, res) => {
     });
 })
 
+// app.patch('/sensor/:id', (req, res) => {
+//     const sensorId = parseInt(req.params.id);
+//     const updateDataArray = req.body.data;
+//
+//     if (Object.keys(req.body).length === 0) {
+//         return res.status(400).json({ error: "Request body must contain fields to update." });
+//     }
+//
+//     const sensorIndex = sensors.findIndex(sensor => sensor.id === sensorId);
+//
+//     if (sensorIndex !== -1) {
+//         sensors[sensorIndex] = {
+//             ...sensors[sensorIndex],
+//             data:[...updateDataArray],
+//             userConfig: req.body.userConfig
+//         };
+//
+//         return res.status(200).json({
+//             message: `Sensor with ID ${sensorId} patched successfully.`,
+//             sensor: sensors[sensorIndex]
+//         });
+//
+//     } else {
+//         return res.status(404).json({
+//             error: `Error: Sensor with ID ${sensorId} not found.`
+//         });
+//     }
+// });
+
 app.patch('/sensor/:id', (req, res) => {
     const sensorId = parseInt(req.params.id);
-    const updateDataArray = req.body.data;
 
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({ error: "Request body must contain fields to update." });
@@ -74,11 +102,38 @@ app.patch('/sensor/:id', (req, res) => {
     const sensorIndex = sensors.findIndex(sensor => sensor.id === sensorId);
 
     if (sensorIndex !== -1) {
+        const existingSensor = sensors[sensorIndex];
+        let updatedSensor = { ...existingSensor };
+
+        if (req.body.data) {
+            updatedSensor.data = [...req.body.data];
+        }
+
+        if (req.body.userConfig) {
+            updatedSensor.userConfig = req.body.userConfig;
+        }
+
+
+        updatedSensor = {
+            ...updatedSensor,
+            ...req.body
+        }
+
+        delete updatedSensor.data;
+        delete updatedSensor.userConfig;
+
+        updatedSensor.data = req.body.data ? [...req.body.data] : existingSensor.data;
+        updatedSensor.userConfig = req.body.userConfig !== undefined ? req.body.userConfig : existingSensor.userConfig;
+
         sensors[sensorIndex] = {
-            ...sensors[sensorIndex],
-            data:[...updateDataArray],
-            userConfig: req.body.userConfig
+            ...existingSensor,
+            ...req.body,
+
+            userConfig: req.body.userConfig !== undefined
+                ? req.body.userConfig
+                : existingSensor.userConfig
         };
+
 
         return res.status(200).json({
             message: `Sensor with ID ${sensorId} patched successfully.`,
