@@ -48,7 +48,7 @@ app.get('/sensor/:id', (req, res) => {
 
     if (sensor) {
         res.status(200).send({
-            sensor: sensor.sensors
+            sensor: sensor
         });
     } else {
         res.status(404).send({
