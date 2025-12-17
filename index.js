@@ -4,7 +4,7 @@ import cors from "cors";
 const app = express();
 const PORT = 8080;
 
-const allowedOrigin = ['https://cdpn.io', 'http://localhost:5173', 'http://localhost:8787'];
+const allowedOrigin = ['https://cdpn.io', 'http://localhost:5173'];
 const corsOptions = {
     origin: allowedOrigin,
     methods: 'GET,POST,PATCH',
