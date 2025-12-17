@@ -1,11 +1,10 @@
 import express from "express";
 import cors from "cors";
-import {getPort} from "./process/wifi.js";
 
 const app = express();
 const PORT = 8080;
 
-const allowedOrigin = ['https://cdpn.io', 'http://localhost:5173'];
+const allowedOrigin = ['https://cdpn.io', 'http://localhost:5173', 'http://localhost:8787'];
 const corsOptions = {
     origin: allowedOrigin,
     methods: 'GET,POST,PATCH',
@@ -15,6 +14,14 @@ app.use(cors(corsOptions));
 
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+    res.setHeader(
+        "Content-Security-Policy",
+        "default-src 'self'; connect-src 'self' http://localhost:8787; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    );
+    next();
+});
 
 
 const sensors = [
@@ -90,30 +97,6 @@ app.patch('/sensor/:id', (req, res) => {
     }
 });
 
-app.post("/wifi", async (req, res) => {
-    try {
-        const port = await getPort();
-        if (!port) {
-            return res.status(503).json({
-                error: "Serial port niet beschikbaar in deze runtime (bijv. Vercel/serverless).",
-            });
-        }
-
-        port.write(
-            JSON.stringify({
-                type: "wifi",
-                ssid: req.body.ssid,
-                password: req.body.password,
-            }) + "\n"
-        );
-
-        return res.json({ status: "sent" });
-    } catch (err) {
-        return res.status(500).json({
-            error: err?.message ?? "Onbekende fout bij serial/wifi.",
-        });
-    }
-});
 
 app.listen(
     PORT,
