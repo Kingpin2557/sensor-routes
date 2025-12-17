@@ -1,4 +1,4 @@
-import { port } from './process/wifi.js';
+import {getPort} from "./process/wifi.js";
 
 const express = require('express');
 const cors = require('cors');
