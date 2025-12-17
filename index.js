@@ -24,8 +24,7 @@ app.use((req, res, next) => {
 });
 
 
-const sensors = [
-]
+const sensors = [];
 
 
 app.get('/', (req, res) => {
