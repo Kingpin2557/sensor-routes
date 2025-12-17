@@ -42,6 +42,21 @@ app.get('/sensors', (req, res) => {
     });
 });
 
+app.get('/sensor/:id', (req, res) => {
+    const sensorId = parseInt(req.params.id);
+    const sensor = sensors.find(sensor => sensor.id === sensorId);
+
+    if (sensor) {
+        res.status(200).send({
+            sensor: sensor
+        });
+    } else {
+        res.status(404).send({
+            error: `Sensor with ID ${sensorId} not found.`
+        });
+    }
+})
+
 app.post('/sensor', (req, res) => {
     const newSensor = req.body;
 
