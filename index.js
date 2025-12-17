@@ -90,16 +90,29 @@ app.patch('/sensor/:id', (req, res) => {
     }
 });
 
-app.post("/wifi", (req, res) => {
-    port.write(
-        JSON.stringify({
-            type: "wifi",
-            ssid: req.body.ssid,
-            password: req.body.password,
-        }) + "\n"
-    );
+app.post("/wifi", async (req, res) => {
+    try {
+        const port = await getPort();
+        if (!port) {
+            return res.status(503).json({
+                error: "Serial port niet beschikbaar in deze runtime (bijv. Vercel/serverless).",
+            });
+        }
 
-    res.json({ status: "sent" });
+        port.write(
+            JSON.stringify({
+                type: "wifi",
+                ssid: req.body.ssid,
+                password: req.body.password,
+            }) + "\n"
+        );
+
+        return res.json({ status: "sent" });
+    } catch (err) {
+        return res.status(500).json({
+            error: err?.message ?? "Onbekende fout bij serial/wifi.",
+        });
+    }
 });
 
 app.listen(

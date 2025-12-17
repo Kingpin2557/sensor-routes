@@ -1,14 +1,4 @@
-import express from "express";
 import { SerialPort } from "serialport";
-import * as path from "node:path";
-
-const app = express();
-app.use(express.json());
-
-const PUBLIC_DIR = path.resolve(process.cwd(), 'public');
-
-// Serve static files (including index.html) from the public directory
-app.use(express.static(PUBLIC_DIR));
 
 const ARDUINO_VENDOR_ID = "303A";
 const ARDUINO_MANUFACTURER_KEYWORD = "Microsoft";
@@ -28,24 +18,35 @@ function logConnectedSerialDevices(ports) {
     }
 }
 
-const ports = await SerialPort.list();
-logConnectedSerialDevices(ports);
-
 const isArduinoPort = (portInfo) => {
     const manufacturer = portInfo.manufacturer?.toLowerCase() ?? "";
-    const matchesManufacturer = manufacturer.includes(ARDUINO_MANUFACTURER_KEYWORD);
+    const matchesManufacturer = manufacturer.includes(ARDUINO_MANUFACTURER_KEYWORD.toLowerCase());
     const matchesVendorId = portInfo.vendorId === ARDUINO_VENDOR_ID;
     return matchesManufacturer || matchesVendorId;
 };
 
-const arduinoPortInfo = ports.find(isArduinoPort);
+let cachedPort = null;
 
-if (!arduinoPortInfo) {
-    console.error("No Arduino detected!");
-    process.exit(1);
+export async function getPort() {
+    if (cachedPort) return cachedPort;
+
+    // Vercel/serverless: geen serial devices + udevadm ontbreekt
+    if (process.env.VERCEL) {
+        return null;
+    }
+
+    const ports = await SerialPort.list(); // kan lokaal wel werken
+    logConnectedSerialDevices(ports);
+
+    const arduinoPortInfo = ports.find(isArduinoPort);
+    if (!arduinoPortInfo) {
+        throw new Error("No Arduino detected!");
+    }
+
+    cachedPort = new SerialPort({
+        path: arduinoPortInfo.path,
+        baudRate: DEFAULT_BAUD_RATE,
+    });
+
+    return cachedPort;
 }
-
-export const port = new SerialPort({
-    path: arduinoPortInfo.path,
-    baudRate: DEFAULT_BAUD_RATE,
-});
