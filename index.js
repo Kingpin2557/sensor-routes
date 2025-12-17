@@ -25,10 +25,6 @@ app.use((req, res, next) => {
 
 
 const sensors = [
-    {
-        id: 1,
-        data:[]
-    },
 ]
 
 
