@@ -1,3 +1,5 @@
+import { port } from './process/wifi.js';
+
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -86,6 +88,18 @@ app.patch('/sensor/:id', (req, res) => {
             error: `Error: Sensor with ID ${sensorId} not found.`
         });
     }
+});
+
+app.post("/wifi", (req, res) => {
+    port.write(
+        JSON.stringify({
+            type: "wifi",
+            ssid: req.body.ssid,
+            password: req.body.password,
+        }) + "\n"
+    );
+
+    res.json({ status: "sent" });
 });
 
 app.listen(
