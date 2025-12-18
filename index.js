@@ -107,6 +107,22 @@ app.patch('/sensor/:id', (req, res) => {
     }
 });
 
+app.delete('/sensor/:id', (req, res) => {
+    const sensorId = parseInt(req.params.id);
+    const sensorIndex = sensors.findIndex(sensor => sensor.id === sensorId);
+
+    if (sensorIndex !== -1) {
+        sensors.splice(sensorIndex, 1);
+        return res.status(200).json({
+            message: `Sensor with ID ${sensorId} deleted successfully.`
+        });
+    } else {
+        return res.status(404).json({
+            error: `Error: Sensor with ID ${sensorId} not found.`
+        });
+    }
+})
+
 
 app.listen(
     PORT,
