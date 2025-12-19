@@ -31,7 +31,7 @@ let pendingWifi = null;
 app.get('/', (req, res) => {
     res.status(200).json({
         message: 'Welcome to the Sensor API. Use /sensors for all data.',
-        available_routes: ['/sensors (GET)', '/sensor/:id (GET)', '/sensor (POST)', '/sensor/:id (PATCH)','/sensor/:id (DELETE)' , '/wifi (POST)']
+        available_routes: ['/sensors (GET)', '/sensor/:id (GET)', '/sensor (POST)', '/sensor/:id (PATCH)','/sensor/:id (DELETE)', '/sensors (DELETE)' , '/wifi (POST)']
     });
 });
 
@@ -154,6 +154,13 @@ app.delete('/sensor/:id', (req, res) => {
             error: `Error: Sensor with ID ${sensorId} not found.`
         });
     }
+})
+
+app.delete('/sensors', (req, res) => {
+    sensors.splice(0, sensors.length);
+    res.status(200).json({
+        message: 'All sensors deleted successfully.'
+    });
 })
 
 
