@@ -158,6 +158,8 @@ app.delete('/sensor/:id', (req, res) => {
 
 app.delete('/sensors', (req, res) => {
     sensors.splice(0, sensors.length);
+    pendingWifi = null;
+
     res.status(200).json({
         message: 'All sensors deleted successfully.'
     });
