@@ -90,6 +90,11 @@ app.patch('/wifi', (req, res) => {
         wifi: { ssid, password }
     }));
 
+    if (!ssid || !password) {
+        return res.status(400).json({
+            error: "SSID and password are required to update WiFi credentials."
+        });
+    }
 
     res.status(200).json({
         message: "WiFi credentials updated for all sensors",
