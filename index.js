@@ -31,7 +31,7 @@ let pendingWifi = null;
 app.get('/', (req, res) => {
     res.status(200).json({
         message: 'Welcome to the Sensor API. Use /sensors for all data.',
-        available_routes: ['/sensors (GET)', '/sensor/:id (GET)', '/sensor (POST)', '/sensor/:id (PATCH)','/sensor/:id (DELETE)' , '/wifi (PATCH)']
+        available_routes: ['/sensors (GET)', '/sensor/:id (GET)', '/sensor (POST)', '/sensor/:id (PATCH)','/sensor/:id (DELETE)' , '/wifi (POST)']
     });
 });
 
