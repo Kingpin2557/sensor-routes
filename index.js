@@ -85,16 +85,16 @@ app.post('/sensor', (req, res) => {
 app.patch('/wifi', (req, res) => {
     const { ssid, password } = req.body;
 
-    sensors.map(sensor => ({
-        ...sensor,
-        wifi: { ssid, password }
-    }));
-
     if (!ssid || !password) {
         return res.status(400).json({
             error: "SSID and password are required to update WiFi credentials."
         });
     }
+
+    sensors.forEach(sensor => {
+        sensor.wifi = { ssid, password };
+    });
+
 
     res.status(200).json({
         message: "WiFi credentials updated for all sensors",
