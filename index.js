@@ -89,17 +89,24 @@ app.post('/sensor', (req, res) => {
 
 
 app.post('/wifi', (req, res) => {
-    const newSensor = {
-        id: Date.now(),
-        name: req.body.name || "New Sensor",
-        wifi: pendingWifi ? { ...pendingWifi } : null
+    const { ssid, password } = req.body;
+
+    if (!ssid || !password) {
+        return res.status(400).json({ error: "SSID and password are required." });
+    }
+
+    pendingWifi = {
+        ssid: ssid,
+        password: password
     };
 
-    sensors.push(newSensor);
+    sensors.forEach(sensor => {
+        sensor.wifi = { ...pendingWifi };
+    });
 
-    res.status(201).json({
-        message: "Sensor registered",
-        sensor: newSensor
+    res.status(200).json({
+        message: "WiFi credentials have been saved",
+        wifi: pendingWifi
     });
 });
 
