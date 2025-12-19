@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 
 
 const sensors = [];
+let pendingWifi = null;
 
 
 app.get('/', (req, res) => {
@@ -86,23 +87,35 @@ app.patch('/wifi', (req, res) => {
     const { ssid, password } = req.body;
 
     if (!ssid || !password) {
-        return res.status(400).json({ error: "SSID and password are required." });
+        return res.status(400).json({ error: "SSID and Password required" });
     }
 
-    // Check if any sensors exist
-    if (sensors.length === 0) {
-        return res.status(404).json({
-            error: "No sensors found. Please connect a sensor before updating WiFi."
-        });
-    }
+    // Store globally so the next sensor added can see it
+    pendingWifi = { ssid, password };
 
+    // Update any sensors that ARE already there
     sensors.forEach(sensor => {
-        sensor.wifi = { ssid, password };
+        sensor.wifi = { ...pendingWifi };
     });
 
     res.status(200).json({
-        message: `Updated ${sensors.length} sensors.`,
-        sensors: sensors
+        message: "WiFi saved and will be applied to all current and future sensors.",
+        currentSensorCount: sensors.length
+    });
+});
+
+app.post('/sensors/register', (req, res) => {
+    const newSensor = {
+        id: Date.now(),
+        name: req.body.name || "New Sensor",
+        wifi: pendingWifi ? { ...pendingWifi } : null
+    };
+
+    sensors.push(newSensor);
+
+    res.status(201).json({
+        message: "Sensor registered",
+        sensor: newSensor
     });
 });
 
