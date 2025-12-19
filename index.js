@@ -86,8 +86,13 @@ app.patch('/wifi', (req, res) => {
     const { ssid, password } = req.body;
 
     if (!ssid || !password) {
-        return res.status(400).json({
-            error: "SSID and password are required to update WiFi credentials."
+        return res.status(400).json({ error: "SSID and password are required." });
+    }
+
+    // Check if any sensors exist
+    if (sensors.length === 0) {
+        return res.status(404).json({
+            error: "No sensors found. Please connect a sensor before updating WiFi."
         });
     }
 
@@ -95,9 +100,8 @@ app.patch('/wifi', (req, res) => {
         sensor.wifi = { ssid, password };
     });
 
-
     res.status(200).json({
-        message: "WiFi credentials updated for all sensors",
+        message: `Updated ${sensors.length} sensors.`,
         sensors: sensors
     });
 });
