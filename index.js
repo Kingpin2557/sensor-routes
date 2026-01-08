@@ -6,9 +6,16 @@ const PORT = 8080;
 
 const allowedOrigin = ['https://cdpn.io', 'http://localhost:5173','https://lego-iot-kit.vercel.app/'];
 const corsOptions = {
-    origin: allowedOrigin,
-    methods: 'GET,POST,PATCH',
-    allowedHeaders: 'Content-Type',
+    origin: function (origin, callback) {
+        // Toestaan als origin in de lijst staat of als er geen origin is (bijv. lokale tools)
+        if (!origin || allowedOrigin.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: 'GET,POST,PATCH,DELETE,OPTIONS',
+    allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
 
