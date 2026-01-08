@@ -111,6 +111,13 @@ app.post('/wifi', (req, res) => {
 });
 
 
+app.get('/wifi', (req, res) => {
+    res.status(200).json({
+        wifi: pendingWifi
+    });
+})
+
+
 app.patch('/sensor/:id', (req, res) => {
     const sensorId = parseInt(req.params.id);
 
