@@ -4,7 +4,7 @@ import cors from "cors";
 const app = express();
 const PORT = 8080;
 
-const allowedOrigin = ['https://cdpn.io', 'http://localhost:5174','https://lego-iot-kit.vercel.app'];
+const allowedOrigin = ['https://cdpn.io', 'http://localhost:5173','https://lego-iot-kit.vercel.app'];
 const corsOptions = {
     origin: function (origin, callback) {
         // Toestaan als origin in de lijst staat of als er geen origin is (bijv. lokale tools)
